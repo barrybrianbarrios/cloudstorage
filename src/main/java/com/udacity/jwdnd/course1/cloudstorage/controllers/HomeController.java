@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 import com.udacity.jwdnd.course1.cloudstorage.models.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.models.CredentialForm;
 import com.udacity.jwdnd.course1.cloudstorage.models.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.AuthenticationService;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
@@ -42,17 +43,22 @@ public class HomeController {
     }
 
      */
-    @PostMapping("/addCredential")
-    public String  addCredential(@ModelAttribute("credential") Credential credential, Model model, Authentication authentication){
+
+    /*@ModelAttribute("credentialform")
+    public CredentialForm getCredentialForm(){
+        return new CredentialForm();
+    }*/
+    @PostMapping("/credential")
+    public String  addCredential(@ModelAttribute("credentialform") CredentialForm credentialform, Model model, Authentication authentication){
         int id = userService.getUser(authentication.getName()).getUserid();
-        credential.setUserid(id);
+        Credential credential = new Credential(credentialform.getUrl(), credentialform.getUsername(),"" ,credentialform.getPassword(), id);
         credentialService.addCredential(credential);
-        model.addAttribute("credential", credentialService.getCredentials(id));
+        //model.addAttribute("credentials", credentialService.getCredentials(id));
         model.addAttribute("result", "success");
         return "result";
     }
     @GetMapping("/home")
-    public String getMessages(Model model, Authentication authentication){
+    public String getCredentials(@ModelAttribute("credentialform") CredentialForm credentialForm, Model model, Authentication authentication){
         User user= userService.getUser(authentication.getName());
         /*
         List<Credential> credentialList = Arrays.asList(new Credential("www.udacity.com", "bcubeb31", "123", "calvin1", 1),
@@ -63,6 +69,7 @@ public class HomeController {
         //model.addAttribute("credentials", credentialList );
         return "home";
     }
+
 
 
 }

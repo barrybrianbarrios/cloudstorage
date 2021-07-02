@@ -9,6 +9,8 @@ public class Credential {
     private String password;
     private Integer userid;
 
+    public Credential(){}
+
     public Credential( String url, String username, String key, String password, Integer userid) {
         this.url = url;
         this.username = username;
