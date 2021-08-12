@@ -13,6 +13,10 @@ public class CredentialService {
         this.credentialMapper = credentialMapper;
     }
 
+    public Credential getCredential(int credentialid){
+        return credentialMapper.getCredential(credentialid);
+    }
+
     public ArrayList<Credential> getCredentials(int userId){
         ArrayList<Credential> b3 = credentialMapper.getCredentials(userId);
 
@@ -33,5 +37,9 @@ public class CredentialService {
 
     public int deleteCredential(int credentialid){
          return credentialMapper.delete(credentialid);
+    }
+
+    public int updateCredential(Credential credential){
+        return credentialMapper.update(credential);
     }
 }

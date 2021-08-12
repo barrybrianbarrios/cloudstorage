@@ -46,6 +46,29 @@ public class HomeController {
     public CredentialForm getCredentialForm(){
         return new CredentialForm();
     }*/
+    @PostMapping()
+    public String editCredential(@ModelAttribute Credential credential, Model model, Authentication authentication){
+    boolean result = true;
+    String message = null;
+    User currentUser = userService.getUser(authentication.getName());
+    Credential existing = credentialService.getCredential(credential.getCredentialid());
+    if (existing == null){
+        message = "What in the world :), This user is a secret agent and doesn't exist.";
+    }
+    else if (currentUser.getUserid().intValue() != Integer.parseInt(existing.getUserid())){
+        message = "Only the owner of a " + existing.getUsername() + " can edit it." ;
+       }
+    if (message != null){
+        model.addAttribute("message", message);
+        result = false;
+        }
+
+    if (result){
+        result = credentialService.updateCredential(credential) == 1;
+    }
+    return "result";
+    }
+
     @PostMapping("/credential")
     public String  addCredential(@ModelAttribute("credentialform") CredentialForm credentialform, Model model, Authentication authentication){
         int id = userService.getUser(authentication.getName()).getUserid();
