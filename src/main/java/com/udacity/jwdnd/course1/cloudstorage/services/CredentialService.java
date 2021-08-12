@@ -14,14 +14,24 @@ public class CredentialService {
     }
 
     public ArrayList<Credential> getCredentials(int userId){
+        ArrayList<Credential> b3 = credentialMapper.getCredentials(userId);
 
-        return credentialMapper.getCredentials(userId);
-
+        System.out.println(b3.size());
+        if(b3.size() > 1){
+            System.out.println(b3.get(1).getPassword());
+        }
+        for (Credential credential:b3) {
+            System.out.println(credential);
+        }
+        //return credentialMapper.getCredentials(userId);
+        return b3;
     }
 
     public void addCredential(Credential credential){
         credentialMapper.insert(credential);
     }
 
-
+    public int deleteCredential(int credentialid){
+         return credentialMapper.delete(credentialid);
+    }
 }

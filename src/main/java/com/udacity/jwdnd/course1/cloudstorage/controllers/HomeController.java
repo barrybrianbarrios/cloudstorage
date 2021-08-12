@@ -7,9 +7,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import java.util.*;
@@ -51,12 +49,24 @@ public class HomeController {
     @PostMapping("/credential")
     public String  addCredential(@ModelAttribute("credentialform") CredentialForm credentialform, Model model, Authentication authentication){
         int id = userService.getUser(authentication.getName()).getUserid();
-        Credential credential = new Credential(credentialform.getUrl(), credentialform.getUsername(),"" ,credentialform.getPassword(), id);
+        Credential credential = new Credential(credentialform.getUrl(), credentialform.getUsername(),"" ,credentialform.getPassword(), String.valueOf(id));
         credentialService.addCredential(credential);
         //model.addAttribute("credentials", credentialService.getCredentials(id));
         model.addAttribute("result", "success");
         return "result";
     }
+
+    @GetMapping("/credential/delete/{credentialid}")
+    public String deleteCredential(@PathVariable int credentialid, Model model){
+    //public String deleteCredential(@ModelAttribute("credentialform") CredentialForm credentialform, Model model, Authentication authentication){
+        //int id = userService.getUser(authentication.getName()).getUserid();
+        System.out.println("CredentialId: " + credentialid);
+        int value = credentialService.deleteCredential(credentialid);
+        System.out.println("Number of records deleted: " + value);
+        model.addAttribute("result", "success");
+        return "result";
+    }
+
     @GetMapping("/home")
     public String getCredentials(@ModelAttribute("credentialform") CredentialForm credentialForm, Model model, Authentication authentication){
         User user= userService.getUser(authentication.getName());

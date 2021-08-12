@@ -7,11 +7,11 @@ public class Credential {
     private String username;
     private String key;
     private String password;
-    private Integer userid;
+    private String userid;
 
-    public Credential(){}
+    //public Credential(){}
 
-    public Credential( String url, String username, String key, String password, Integer userid) {
+    public Credential( String url, String username, String key, String password, String userid) {
         this.url = url;
         this.username = username;
         this.key = key;
@@ -59,11 +59,21 @@ public class Credential {
         this.password = password;
     }
 
-    public Integer getUserid() {
+    public String getUserid() {
         return userid;
     }
 
-    public void setUserid(Integer userid) {
+    public void setUserid(String userid) {
         this.userid = userid;
     }
+
+
+
+    @Override
+    public String toString() {
+        return String.format("credentialid: %d\nurl: %s\nusername: %s\nkey: %s\npassword: %s\nuserid: %s",
+                this.credentialid, this.url, this.username, this.key, this.password, this.userid);
+    }
+
+
 }
