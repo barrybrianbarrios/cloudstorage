@@ -35,6 +35,7 @@ public class CredentialService {
         return b3;
     }
 
+    /*
     public void addCredential(Credential credential){
         SecureRandom random = new SecureRandom();
         byte[] key = new byte[16];
@@ -43,7 +44,7 @@ public class CredentialService {
         credential.setKey(encodedKey);
         credential.setPassword(encryptionService.encryptValue(credential.getPassword(), credential.getKey()));
         credentialMapper.insert(credential);
-    }
+    }*/
 
     public int deleteCredential(int credentialid){
          return credentialMapper.delete(credentialid);
@@ -53,6 +54,16 @@ public class CredentialService {
         return credentialMapper.update(credential);
     }
 
+    public int upsertCredential(Credential credential){
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        String encodedKey = Base64.getEncoder().encodeToString(key);
+        credential.setKey(encodedKey);
+        credential.setPassword(encryptionService.encryptValue(credential.getPassword(), credential.getKey()));
+        System.out.println("credentialid: " + credential.getCredentialid());
+        return credentialMapper.upsert(credential);
+    }
     private Credential encryptPassword(Credential c) {
         String encryptedPassword = encryptionService.encryptValue(c.getPassword(), c.getKey());
         c.setPassword(encryptedPassword);

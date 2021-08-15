@@ -6,6 +6,7 @@ public class CredentialForm {
     private String url;
     private String username;
     private String password;
+    private Integer credentialid;
 
     public String getUrl() {
         return url;
@@ -30,4 +31,9 @@ public class CredentialForm {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public Integer getCredentialid() { return credentialid; }
+
+    public void setCredentialid(Integer credentialid) { this.credentialid = credentialid; }
+
 }
