@@ -1,11 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 import com.udacity.jwdnd.course1.cloudstorage.models.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.models.CredentialForm;
+import com.udacity.jwdnd.course1.cloudstorage.models.Note;
 import com.udacity.jwdnd.course1.cloudstorage.models.User;
-import com.udacity.jwdnd.course1.cloudstorage.services.AuthenticationService;
-import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
-import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +15,14 @@ import java.util.*;
 @Controller
 public class HomeController {
     private CredentialService credentialService;
+    private NoteService noteService;
     private UserService userService;
 
     //@Autowired
     //EncryptionService encryptionService;
-    public HomeController(CredentialService credentialService, UserService userService){
+    public HomeController(CredentialService credentialService,NoteService noteService, UserService userService){
         this.credentialService = credentialService;
+        this.noteService = noteService;
         this.userService = userService;
     }
     /*
@@ -59,14 +59,14 @@ public class HomeController {
 
 
     @GetMapping("/home")
-    public String getCredentials(@ModelAttribute("credentialform") CredentialForm credentialForm, Model model, Authentication authentication){
+    public String getCredentials(@ModelAttribute("credentialform") CredentialForm credentialForm, @ModelAttribute("note") Note note, Model model, Authentication authentication){
         User user= userService.getUser(authentication.getName());
         /*
         List<Credential> credentialList = Arrays.asList(new Credential("www.udacity.com", "bcubeb31", "123", "calvin1", 1),
                 new Credential("bankofamerica.com", "bucbeb32", "123", "calvin2", 1));
         */
         model.addAttribute("credentials", credentialService.getCredentials(user.getUserid()) );
-
+        model.addAttribute("notes", noteService.getNotes(user.getUserid()) );
         //model.addAttribute("credentials", credentialList );
         return "home";
     }
