@@ -29,7 +29,7 @@ public class NoteService {
         return noteMapper.delete(noteid);
     }
 
-    public int upsertCredential(Note note){
+    public int upsertNote(Note note){
 
         return noteMapper.upsert(note);
     }

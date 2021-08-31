@@ -20,16 +20,12 @@ public class NoteController {
         this.userService = userService;
     }
 
-    @ModelAttribute("note")
-    public Note getNote(){
-        return new Note();
-    }
 
     @PostMapping()
     public String  upsertNote(@ModelAttribute("note") Note note,  Model model, Authentication authentication){
         int id = userService.getUser(authentication.getName()).getUserid();
         note.setUserid(id);
-        boolean result = noteService.upsertCredential(note) == 1;
+        boolean result = noteService.upsertNote(note) == 1;
         model.addAttribute("result", result ? "success" : "failure");
         return "result";
     }

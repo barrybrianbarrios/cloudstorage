@@ -1,8 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
-import com.udacity.jwdnd.course1.cloudstorage.models.Credential;
-import com.udacity.jwdnd.course1.cloudstorage.models.CredentialForm;
-import com.udacity.jwdnd.course1.cloudstorage.models.Note;
-import com.udacity.jwdnd.course1.cloudstorage.models.User;
+import com.udacity.jwdnd.course1.cloudstorage.models.*;
 import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,13 +13,15 @@ import java.util.*;
 public class HomeController {
     private CredentialService credentialService;
     private NoteService noteService;
+    private FileService fileService;
     private UserService userService;
 
     //@Autowired
     //EncryptionService encryptionService;
-    public HomeController(CredentialService credentialService,NoteService noteService, UserService userService){
+    public HomeController(CredentialService credentialService,NoteService noteService, FileService fileService, UserService userService){
         this.credentialService = credentialService;
         this.noteService = noteService;
+        this.fileService = fileService;
         this.userService = userService;
     }
     /*
@@ -56,10 +55,23 @@ public class HomeController {
         return "result";
     }*/
 
+    @ModelAttribute("credentialform")
+    public CredentialForm getCredentialForm(){
+        return new CredentialForm();
+    }
 
+    @ModelAttribute("note")
+    public Note getNote(){
+        return new Note();
+    }
+
+    @ModelAttribute("file")
+    public File getFile(){
+        return new File();
+    }
 
     @GetMapping("/home")
-    public String getCredentials(@ModelAttribute("credentialform") CredentialForm credentialForm, @ModelAttribute("note") Note note, Model model, Authentication authentication){
+    public String getHome(Model model, Authentication authentication){
         User user= userService.getUser(authentication.getName());
         /*
         List<Credential> credentialList = Arrays.asList(new Credential("www.udacity.com", "bcubeb31", "123", "calvin1", 1),
@@ -67,6 +79,7 @@ public class HomeController {
         */
         model.addAttribute("credentials", credentialService.getCredentials(user.getUserid()) );
         model.addAttribute("notes", noteService.getNotes(user.getUserid()) );
+        model.addAttribute("files", fileService.getFiles(user.getUserid()));
         //model.addAttribute("credentials", credentialList );
         return "home";
     }
