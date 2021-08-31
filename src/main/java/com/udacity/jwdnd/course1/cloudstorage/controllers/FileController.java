@@ -29,39 +29,42 @@ public class FileController {
 
 
     @PostMapping()
-    public String  upsertFile(@ModelAttribute("files") File file1, MultipartFile file, Model model, Authentication authentication){
+    public String  upsertFile(MultipartFile fileUpload, Model model, Authentication authentication){
         int id = userService.getUser(authentication.getName()).getUserid();
         boolean result = false;
         try{
-            if (file.isEmpty()) {
+            if (fileUpload.isEmpty()) {
                 message="Please select a file!" ;
                 throw new IOException("File Not FoundException");
             }
 
-            if (file.getSize() > 500000000) {
+            if (fileUpload.getSize() > 500000000) {
                 message = "File size too large";
                 model.addAttribute("fileSizeError","File size larger than size limit");
                 throw new IOException("Error: File size larger than size limit");
             }
 
-            if (this.fileService.getFileByFileName(file.getOriginalFilename()) != null) {
-                message = file.getOriginalFilename() + " exists in the database!!! Please upload another file!";
+            if (this.fileService.getFileByFileName(fileUpload.getOriginalFilename()) != null) {
+                message = fileUpload.getOriginalFilename() + " exists in the database!!! Please upload another file!";
                 throw new IOException("File name exists");
             }
 
 
             // Converting MultipartFile this projects File
-
-            file1.setFilename(file.getOriginalFilename());
-            file1.setContenttype(file.getContentType());
-            file1.setFilesize(file.getSize());
-            file1.setFiledata(file.getBytes());
+            File file1 = new File();
+            file1.setFilename(fileUpload.getOriginalFilename());
+            file1.setContenttype(fileUpload.getContentType());
+            file1.setFilesize(fileUpload.getSize());
+            file1.setFiledata(fileUpload.getBytes());
             file1.setUserid(id);
             result = fileService.upsertFile(file1) == 1;
             message = "You successfully uploaded '" + file1.getFilename() + "' !";
 
         } catch (IOException e){
 
+
+        } catch (Exception e){
+            System.out.println(e);
         }
 
         model.addAttribute("result", result ? "success" : "failure");
