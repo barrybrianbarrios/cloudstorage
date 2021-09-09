@@ -20,8 +20,9 @@ import java.sql.SQLException;
 public class FileController {
     private FileService fileService;
     private UserService userService;
-    private String message ;
-
+    private String message;
+    private status result;
+    private enum status {success, failure, error};
     public FileController(FileService fileService, UserService userService){
         this.fileService = fileService;
         this.userService = userService;
@@ -30,21 +31,25 @@ public class FileController {
 
     @PostMapping()
     public String  upsertFile(MultipartFile fileUpload, Model model, Authentication authentication){
+
         int id = userService.getUser(authentication.getName()).getUserid();
-        boolean result = false;
+
         try{
             if (fileUpload.isEmpty()) {
+                result = status.error;
                 message="Please select a file!" ;
                 throw new IOException("File Not FoundException");
             }
 
-            if (fileUpload.getSize() > 500000000) {
+            if (fileUpload.getSize() > 100000000) {
+                result = status.error;
                 message = "File size too large";
                 model.addAttribute("fileSizeError","File size larger than size limit");
                 throw new IOException("Error: File size larger than size limit");
             }
 
             if (this.fileService.getFileByFileName(fileUpload.getOriginalFilename()) != null) {
+                result = status.error;
                 message = fileUpload.getOriginalFilename() + " exists in the database!!! Please upload another file!";
                 throw new IOException("File name exists");
             }
@@ -57,8 +62,8 @@ public class FileController {
             file1.setFilesize(fileUpload.getSize());
             file1.setFiledata(fileUpload.getBytes());
             file1.setUserid(id);
-            result = fileService.upsertFile(file1) == 1;
-            message = "You successfully uploaded '" + file1.getFilename() + "' !";
+            result = fileService.upsertFile(file1) == 1 ? status.success: status.failure;
+            message = result == status.success ? "You successfully uploaded '" + file1.getFilename() + "' !": "Error occurred when uploading file";
 
         } catch (IOException e){
 
@@ -67,7 +72,8 @@ public class FileController {
             System.out.println(e);
         }
 
-        model.addAttribute("result", result ? "success" : "failure");
+        model.addAttribute("result", result.toString() );
+        model.addAttribute("message", message);
         return "result";
     }
 
